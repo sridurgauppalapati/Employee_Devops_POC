@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Employees</title>
+</head>
+<body>
+<section>
+    <div class="page-header">
+        <h1 data-testid="employees-title">All Employees</h1>
+        <a class="button" th:href="@{/employees/add}" data-testid="add-employee-button">Add Employee</a>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}" data-testid="success-message"></div>
+    <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}" data-testid="error-message"></div>
+
+    <table class="data-table" data-testid="employees-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Job Title</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="employee : ${employees}" th:attr="data-testid=${'employee-row-' + employee.id}">
+            <td th:text="${employee.id}"></td>
+            <td th:text="${employee.firstName + ' ' + employee.lastName}"></td>
+            <td th:text="${employee.email}"></td>
+            <td th:text="${employee.department}"></td>
+            <td th:text="${employee.jobTitle}"></td>
+            <td class="actions-cell">
+                <a th:href="@{/employees/{id}/edit(id=${employee.id})}" data-testid="edit-link">Edit</a>
+                <form th:action="@{/employees/{id}/delete(id=${employee.id})}" method="post" class="inline-form">
+                    <button type="submit" data-testid="delete-button">Delete</button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(employees)}">
+            <td colspan="6" data-testid="no-employees-message">No employees found.</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

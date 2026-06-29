@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title th:text="${pageTitle}">Employee Form</title>
+</head>
+<body>
+<section>
+    <div class="page-header">
+        <h1 th:text="${pageTitle}" data-testid="form-title">Employee Form</h1>
+    </div>
+
+    <form th:action="${employee.id} == null ? @{/employees} : @{/employees/{id}(id=${employee.id})}"
+          th:object="${employee}" method="post" class="employee-form" data-testid="employee-form">
+        <input th:if="${employee.id != null}" type="hidden" th:field="*{id}"/>
+
+        <label for="firstName">First Name</label>
+        <input id="firstName" type="text" th:field="*{firstName}" required data-testid="firstName-input"/>
+        <p class="field-error" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></p>
+
+        <label for="lastName">Last Name</label>
+        <input id="lastName" type="text" th:field="*{lastName}" required data-testid="lastName-input"/>
+        <p class="field-error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></p>
+
+        <label for="email">Email</label>
+        <input id="email" type="email" th:field="*{email}" required data-testid="email-input"/>
+        <p class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+
+        <label for="department">Department</label>
+        <input id="department" type="text" th:field="*{department}" required data-testid="department-input"/>
+        <p class="field-error" th:if="${#fields.hasErrors('department')}" th:errors="*{department}"></p>
+
+        <label for="jobTitle">Job Title</label>
+        <input id="jobTitle" type="text" th:field="*{jobTitle}" required data-testid="jobTitle-input"/>
+        <p class="field-error" th:if="${#fields.hasErrors('jobTitle')}" th:errors="*{jobTitle}"></p>
+
+        <div class="form-actions">
+            <button type="submit" data-testid="save-button">Save</button>
+            <a th:href="@{/employees}" data-testid="cancel-button">Cancel</a>
+        </div>
+    </form>
+</section>
+</body>
+</html>

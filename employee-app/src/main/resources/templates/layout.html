@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(title, content)">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:replace="${title}">Employee Management</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+</head>
+<body>
+<header class="topbar" data-testid="app-header">
+    <div class="brand" data-testid="app-brand">Employee Management</div>
+    <nav class="nav" data-testid="main-nav">
+        <a th:href="@{/home}" data-testid="nav-home">Home</a>
+        <a th:href="@{/employees}" data-testid="nav-employees">Employees</a>
+        <a th:href="@{/employees/search}" data-testid="nav-search">Search</a>
+        <a th:href="@{/employees/add}" data-testid="nav-add">Add</a>
+    </nav>
+    <form th:action="@{/logout}" method="post" class="logout-form">
+        <button type="submit" data-testid="logout-button">Logout</button>
+    </form>
+</header>
+<main class="container">
+    <div th:replace="${content}">Content</div>
+</main>
+</body>
+</html>

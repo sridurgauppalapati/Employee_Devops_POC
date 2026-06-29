@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Search Employees</title>
+</head>
+<body>
+<section>
+    <div class="page-header">
+        <h1 data-testid="search-title">Search Employees</h1>
+    </div>
+
+    <form th:action="@{/employees/search}" method="get" class="search-form" data-testid="search-form">
+        <label for="q">Search by name, email, department, or job title</label>
+        <div class="search-row">
+            <input id="q" name="q" type="text" th:value="${query}" placeholder="Enter search term"
+                   data-testid="search-input"/>
+            <button type="submit" data-testid="search-button">Search</button>
+        </div>
+    </form>
+
+    <table class="data-table" data-testid="search-results-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Job Title</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="employee : ${employees}" th:attr="data-testid=${'search-result-' + employee.id}">
+            <td th:text="${employee.id}"></td>
+            <td th:text="${employee.firstName + ' ' + employee.lastName}"></td>
+            <td th:text="${employee.email}"></td>
+            <td th:text="${employee.department}"></td>
+            <td th:text="${employee.jobTitle}"></td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(employees)}">
+            <td colspan="5" data-testid="no-search-results">No matching employees found.</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

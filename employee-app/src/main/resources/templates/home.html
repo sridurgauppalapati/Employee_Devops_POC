@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Home</title>
+</head>
+<body>
+<section>
+    <div class="hero" data-testid="home-page">
+        <h1 data-testid="home-title">Welcome to Employee Management</h1>
+        <p data-testid="home-subtitle">Manage employee records from one place.</p>
+        <div class="actions">
+            <a class="button" th:href="@{/employees}" data-testid="view-employees-link">View All Employees</a>
+            <a class="button secondary" th:href="@{/employees/add}" data-testid="add-employee-link">Add Employee</a>
+            <a class="button secondary" th:href="@{/employees/search}" data-testid="search-employee-link">Search Employee</a>
+        </div>
+    </div>
+</section>
+</body>
+</html>
