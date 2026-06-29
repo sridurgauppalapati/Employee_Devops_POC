@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-smoke:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+          cache: maven
+
+      - name: Run unit tests
+        run: mvn clean test -pl employee-app -am
+
+      - name: Package application
+        run: mvn -pl employee-app -am package -DskipTests
+
+      - name: Build Docker image
+        run: docker build -t employee-app:${{ github.run_number }} .
+
+      - name: Start application
+        run: docker compose up -d --build --wait
+
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Run smoke tests
+        run: >
+          mvn test -pl automation-tests
+          -DskipTests=false
+          -DsuiteXmlFile=SmokeSuite.xml
+          -Dbase.url=http://localhost:8080
+          -Dheadless=true
+
+      - name: Generate Allure report
+        if: always()
+        run: mvn -pl automation-tests allure:report
+
+      - name: Upload unit test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-results
+          path: employee-app/target/surefire-reports/
+          retention-days: 14
+
+      - name: Upload smoke test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-test-results
+          path: automation-tests/target/surefire-reports/
+          retention-days: 14
+
+      - name: Upload Allure report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: automation-tests/target/site/allure-maven-plugin/
+          retention-days: 14
+
+      - name: Stop containers
+        if: always()
+        run: docker compose down
