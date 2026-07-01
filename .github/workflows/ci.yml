@@ -119,3 +119,25 @@ jobs:
       - name: Stop containers
         if: always()
         run: docker compose down
+      - name: Notify Teams
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+        run: |
+          curl -H "Content-Type: application/json" -d "{
+            \"type\": \"message\",
+            \"attachments\": [{
+              \"contentType\": \"application/vnd.microsoft.card.adaptive\",
+              \"content\": {
+                \"type\": \"AdaptiveCard\",
+                \"version\": \"1.4\",
+                \"body\": [
+                  {\"type\": \"TextBlock\", \"text\": \"Deployment Successful\", \"weight\": \"Bolder\", \"size\": \"Medium\"},
+                  {\"type\": \"TextBlock\", \"text\": \"Environment: QA\"},
+                  {\"type\": \"TextBlock\", \"text\": \"Version: v1.0.${{ github.run_number }}\"},
+                  {\"type\": \"TextBlock\", \"text\": \"Smoke Tests: Passed\"},
+                  {\"type\": \"TextBlock\", \"text\": \"Failures: 0\"}
+                ]
+              }
+            }]
+          }" "$TEAMS_WEBHOOK_URL"

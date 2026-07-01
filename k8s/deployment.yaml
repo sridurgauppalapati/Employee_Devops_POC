@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
         - name: employee-app
-          image: employee-app:latest
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/sridurgauppalapati/employee-app:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
